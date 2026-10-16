@@ -29,10 +29,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             showMenu()
             return
         }
-        NSApp.activate(ignoringOtherApps: true)
-        if !popover.isShown {
-            popover.show(relativeTo: sender.bounds, of: sender, preferredEdge: .minY)
+        if popover.isShown {
+            popover.performClose(nil)
+            return
         }
+        NSApp.activate(ignoringOtherApps: true)
+        popover.show(relativeTo: sender.bounds, of: sender, preferredEdge: .minY)
         popover.contentViewController?.view.window?.makeKey()
     }
 
