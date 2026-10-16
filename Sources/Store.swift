@@ -20,6 +20,8 @@ struct HoldItem: Identifiable, Codable, Equatable {
 ///   ~/Library/Application Support/Holdit/files/<id>/  – a private copy of each dropped file
 final class Store: ObservableObject {
     @Published var items: [HoldItem] = []
+    /// The row currently being dragged out of our own panel, if any.
+    var draggingID: UUID?
 
     let root: URL
     let filesDir: URL
@@ -130,6 +132,13 @@ final class Store: ObservableObject {
 
     /// Drops coming from Finder, browsers, editors, etc.
     func handleDrop(_ providers: [NSItemProvider], at index: Int? = nil) {
+        // A row dragged within the panel: reorder instead of adding a duplicate.
+        if let id = draggingID {
+            if let index, let from = items.firstIndex(where: { $0.id == id }) {
+                move(from: IndexSet(integer: from), to: index)
+            }
+            return
+        }
         for provider in providers.reversed() {
             if provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) {
                 provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier) { data, _ in
@@ -191,10 +200,10 @@ final class Store: ObservableObject {
 
     /// What gets handed to Finder/other apps when a row is dragged out.
     /// Files are handed over as a fresh copy so the stored one is never moved away.
-    func dragProvider(for item: HoldItem) -> NSItemProvider {
+    func dragWriter(for item: HoldItem) -> NSPasteboardWriting? {
         switch item.kind {
         case .text:
-            return NSItemProvider(object: (item.text ?? "") as NSString)
+            return (item.text ?? "") as NSString
         case .file:
             let source = fileURL(for: item)
             let dir = dragDir.appendingPathComponent(UUID().uuidString, isDirectory: true)
@@ -202,9 +211,9 @@ final class Store: ObservableObject {
             do {
                 try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
                 try FileManager.default.copyItem(at: source, to: dest)
-                return NSItemProvider(contentsOf: dest) ?? NSItemProvider()
+                return dest as NSURL
             } catch {
-                return NSItemProvider(contentsOf: source) ?? NSItemProvider()
+                return FileManager.default.fileExists(atPath: source.path) ? source as NSURL : nil
             }
         }
     }

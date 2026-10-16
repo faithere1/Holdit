@@ -19,9 +19,7 @@ struct PanelView: View {
                 List {
                     ForEach(store.items) { item in
                         ItemRow(item: item, store: store)
-                            .itemProvider { store.dragProvider(for: item) }
                     }
-                    .onMove(perform: store.move)
                     .onInsert(of: dropTypes) { index, providers in
                         store.handleDrop(providers, at: index)
                     }
@@ -95,18 +93,21 @@ struct ItemRow: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            icon
-                .frame(width: 32, height: 32)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-                Text(subtitle)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
+            HStack(spacing: 10) {
+                icon
+                    .frame(width: 32, height: 32)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+                Spacer(minLength: 4)
             }
-            Spacer(minLength: 4)
+            .overlay(RowDragSource(item: item, store: store, tooltip: tooltip))
             HStack(spacing: 6) {
                 Button {
                     store.copyToClipboard(item)
@@ -129,10 +130,11 @@ struct ItemRow: View {
             .opacity(hovering ? 1 : 0.35)
         }
         .padding(.vertical, 3)
-        .contentShape(Rectangle())
         .onHover { hovering = $0 }
-        .onTapGesture(count: 2) { store.open(item) }
-        .help(item.kind == .text ? (item.text ?? "") : "Double-click to open · drag out to use")
+    }
+
+    private var tooltip: String {
+        item.kind == .text ? (item.text ?? "") : "Double-click to open · drag out to use"
     }
 
     @ViewBuilder private var icon: some View {
