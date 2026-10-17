@@ -12,6 +12,7 @@ Drop anything in. Drag it back out whenever you need it.
 ![Swift](https://img.shields.io/badge/Swift-5-F05138?style=flat-square&logo=swift&logoColor=white)
 ![SwiftUI](https://img.shields.io/badge/SwiftUI-AppKit-0A84FF?style=flat-square)
 ![Dependencies](https://img.shields.io/badge/dependencies-none-34C759?style=flat-square)
+![License](https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square)
 
 </div>
 
@@ -96,6 +97,10 @@ Built with Swift, AppKit and SwiftUI only. No third-party dependencies.
 ## ⚠️ Known limitations
 
 - Attachments dragged directly out of Apple Mail (file promises) may not drop in. Save them first, or copy them and use **Paste**.
+
+## 📄 License
+
+[MIT](LICENSE) © faithere1
 
 ---
 
