@@ -19,6 +19,13 @@ Drop anything in. Drag it back out whenever you need it.
 
 Holdit sits next to your Wi‑Fi and Bluetooth icons. Click it and a panel drops down: drag in files, paste your clipboard, and pull items back out into Finder, Mail, a browser upload box or any other app. Everything stays put until **you** remove it, across quits, restarts and reboots.
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot-dark.png">
+    <img src="docs/screenshot-light.png" width="420" alt="The Holdit panel holding files and text snippets">
+  </picture>
+</p>
+
 ## ✨ Features
 
 |   |   |
